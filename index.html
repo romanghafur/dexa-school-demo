@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F6FD1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Dexa School Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm, trustworthy school software that looks shipped
+   IDEA: the real product running live — three screens sharing one school
+   PICTURE: the working app itself (desktop window or phone), large, under a modest title
+   COLOUR and TYPE: white/deep night ground, school blue #1F6FD1, navy, warm amber for alerts; Vazirmatn
+   LAYOUT: role switch on top, the app as the stage, a short guide beside it, stacked on phones */
+:root{color-scheme:light dark;--bg:light-dark(#F3F6FA,#0A1322);--card:light-dark(#FFFFFF,#12203A);--soft:light-dark(#EEF4FB,#182A48);--ink:light-dark(#10233B,#E6EEF8);--mute:light-dark(#4A5B70,#A9B8CB);--line:light-dark(#DCE4EE,#26395C);--acc:light-dark(#1F6FD1,#5AA2FF);--navy:light-dark(#0E2A47,#06101F);--warnbg:light-dark(#FFF3E3,#3A2A12);--warn:light-dark(#8A4B00,#FFB55C);--ok:light-dark(#1B6B3A,#6FD39A);--okbg:light-dark(#E6F5EC,#12321F)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Vazirmatn,Tahoma,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,3.5vw,44px) max(5vw,16px)}
+.top{background:var(--card);border-bottom:1px solid var(--line);padding-bottom:0}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--acc);display:grid;place-items:center;flex:none}
+h1{margin:14px 0 4px;font-size:clamp(28px,4vw,42px);line-height:1.15;text-wrap:balance}
+.lede{margin:0;color:var(--mute);max-width:66ch}
+.sample{font-size:13px;color:var(--mute);margin:6px 0 0}
+.roles{display:flex;gap:6px;margin-top:20px;overflow-x:auto}
+.role{flex:none;border:0;background:none;color:var(--mute);font:600 16px Vazirmatn,sans-serif;padding:12px 18px;min-height:48px;border-bottom:3px solid transparent;cursor:pointer;display:flex;gap:8px;align-items:center}
+.role[aria-selected=true]{color:var(--acc);border-color:var(--acc)}
+.role:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.badge{background:#D9480F;color:#fff;border-radius:99px;font-size:12px;padding:0 7px;line-height:20px}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;max-width:1240px;margin:0 auto}
+.guide{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.guide h2{margin:0 0 8px;font-size:18px}.guide ol{margin:0;padding-inline-start:20px;color:var(--mute);font-size:15px}.guide li{margin-bottom:6px}
+.win{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(14,42,71,.45)}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--navy);color:#fff;font-size:14px}
+.tabs{display:flex;gap:4px;padding:10px 12px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{flex:none;border:0;background:none;color:var(--mute);font:600 15px Vazirmatn,sans-serif;padding:10px 14px;min-height:44px;border-bottom:2px solid transparent;cursor:pointer}
+.tab[aria-selected=true]{color:var(--acc);border-color:var(--acc)}
+.pad{padding:18px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--soft);border-radius:12px;padding:14px}.stat b{display:block;font-size:24px;line-height:1.2;white-space:nowrap}.stat span{font-size:13px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:start}th{font-size:13px;color:var(--mute);font-weight:600}
+td.n,th.n{text-align:end;white-space:nowrap;font-variant-numeric:tabular-nums}
+.btn{border:0;border-radius:10px;background:var(--acc);color:#fff;font:600 15px Vazirmatn,sans-serif;padding:10px 16px;min-height:44px;cursor:pointer}
+.btn.ghost{background:var(--soft);color:var(--ink)}.btn.sm{min-height:36px;padding:6px 12px;font-size:14px}
+.sub{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}.sub button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;font:600 14px Vazirmatn,sans-serif;padding:8px 14px;min-height:40px;cursor:pointer}.sub button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+.hbar{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px;margin:6px 0}.hbar i{display:block;height:12px;border-radius:99px;background:var(--acc)}
+.net b{color:var(--ok)}.net.neg b{color:#C2410C}
+.form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end;background:var(--soft);border-radius:12px;padding:14px;margin-bottom:16px}.form label{font-size:13px;color:var(--mute);display:block;margin-bottom:4px}
+select,input[type=text]{font:16px Vazirmatn,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 12px;width:100%;min-height:44px}
+@media(max-width:700px){.form{grid-template-columns:minmax(0,1fr)}}
+input[type=number],textarea{font:16px Vazirmatn,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 12px;width:100%}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;background:var(--soft)}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.warn{background:var(--warnbg);color:var(--warn)}
+.phonewrap{display:flex;justify-content:center}
+.phone{width:min(380px,100%);background:var(--navy);border-radius:42px;padding:12px;box-shadow:0 24px 50px -28px rgba(14,42,71,.6)}
+.screen{background:var(--bg);border-radius:32px;overflow:hidden;min-height:660px}
+.appbar{background:var(--acc);color:#fff;padding:22px 18px 16px}.appbar small{opacity:.85;font-size:13px}.appbar b{display:block;font-size:19px}
+.list{padding:12px;display:flex;flex-direction:column;gap:10px}
+.card{background:var(--card);border-radius:14px;padding:12px 14px;border:1px solid var(--line)}
+.card h3{margin:0 0 6px;font-size:15px}.muted{color:var(--mute);font-size:14px}
+.alert{background:var(--warnbg);border-color:transparent}.alert h3{color:var(--warn)}
+.seg{display:flex;gap:4px}.seg button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;font:600 13px Vazirmatn,sans-serif;min-height:40px;cursor:pointer}
+.seg button[aria-pressed=true].p{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.seg button[aria-pressed=true].a{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
+.seg button[aria-pressed=true].l{background:var(--soft);color:var(--acc);border-color:var(--acc)}
+.meter{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:8px}.meter i{display:block;height:100%;background:var(--acc)}
+.grade{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}.grade:last-child{border:0}
+#toast{position:fixed;inset-inline:16px;bottom:18px;margin:auto;max-width:520px;background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;display:none;align-items:center;gap:12px;justify-content:space-between;z-index:9;box-shadow:0 12px 30px rgba(0,0,0,.3)}
+#toast.on{display:flex;animation:up .25s ease}
+@keyframes up{from{transform:translateY(16px);opacity:0}}
+@media(prefers-reduced-motion:reduce){#toast.on{animation:none}}
+.scroll{overflow-x:auto}
+@media(max-width:900px){.stage{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){table{font-size:13px}.pad{padding:12px}.screen{min-height:560px}}
+
+.mbar{display:none}
+.role svg{flex:none}
+.gclose{display:none}
+html{-webkit-tap-highlight-color:transparent}
+@media(max-width:700px){
+ body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+ .top{padding:0;border:0;background:none}
+ .intro{display:none}
+ .mbar{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:6;background:var(--card);border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top)) 14px 8px}
+ .mbar .logo{width:36px;height:36px;border-radius:10px}
+ .help{width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:700 18px Vazirmatn,sans-serif;cursor:pointer}
+ .roles{position:fixed;bottom:0;inset-inline:0;margin:0;background:var(--card);border-top:1px solid var(--line);z-index:8;justify-content:space-around;gap:0;overflow:visible;padding-bottom:env(safe-area-inset-bottom)}
+ .role{flex:1;flex-direction:column;gap:2px;font-size:12px;border-bottom:0;border-top:3px solid transparent;padding:6px 4px;min-height:62px;position:relative;justify-content:center}
+ .role[aria-selected=true]{border-color:var(--acc)}
+ .role .rsub{display:none}
+ .role .badge{position:absolute;top:4px;inset-inline-start:calc(50% + 6px)}
+ main.band{padding:0}
+ .stage{gap:0}
+ .guide{display:none}
+ body.helpon .guide{display:block;position:fixed;inset-inline:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:9;border-radius:18px 18px 0 0;max-height:70vh;overflow:auto;box-shadow:0 -12px 30px rgba(0,0,0,.25)}
+ body.helpon .gclose{display:block;width:100%;margin-top:12px}
+ .phone{width:100%;background:none;padding:0;border-radius:0;box-shadow:none}
+ .screen{border-radius:0;min-height:calc(100vh - 130px)}
+ .win{border-radius:0;border:0;box-shadow:none;background:var(--bg)}
+ .bar{display:none}
+ .tabs{position:sticky;top:var(--mh,60px);background:var(--card);z-index:4;padding:4px 8px 0}
+ .pad{padding:14px 12px}
+ .stats{gap:8px}.stat{padding:12px;background:var(--card);border:1px solid var(--line)}.stat b{font-size:18px;white-space:normal}
+ .row .btn{flex:1 1 100%}
+ .sub{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.sub button{flex:none}
+ #toast{bottom:calc(76px + env(safe-area-inset-bottom))}
+ table{font-size:14px}
+ .stack thead{display:none}
+ .stack tr{display:grid;padding:10px 12px;margin-bottom:8px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+ .stack td{display:flow-root;border:0;padding:4px 0;padding-inline-start:7.5em;text-align:start;white-space:normal}
+ .stack td::before{content:attr(data-l);float:inline-start;width:7em;margin-inline-start:-7.5em;color:var(--mute);font-size:13px}
+ .stack td:empty{display:none}
+ .stack td[colspan]{padding-inline-start:0}.stack td[colspan]::before{display:none}
+ .stack td .seg{margin-top:2px}
+ .stack td{min-width:0!important}
+ .stack td.n{text-align:start}
+ .scroll{overflow:visible}
+ .hbar{grid-template-columns:90px minmax(0,1fr) auto}
+}
+</style>
+</head>
+<body>
+<div class="mbar"><div class="brand" style="gap:10px"><span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><div><b dir="ltr" style="font-size:17px">Dexa School</b><div class="muted" style="font-size:12px;line-height:1.3" id="mrole"></div></div></div><button class="help" id="helpbtn" aria-label="ڕێنمایی">?</button></div>
+<header class="band top">
+<div class="intro">
+<div class="brand">
+<span class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span>
+<div><b style="font-size:20px" dir="ltr">Dexa School</b><div class="muted">سیستەمی بەڕێوەبردنی قوتابخانەی ئەهلی</div></div>
+</div>
+<h1>تاقی بکەرەوە: یەک قوتابخانە، سێ ڕووکار</h1>
+<p class="lede">لە نێوان کارگێڕی، مامۆستا و دایک و باوک بگۆڕە. هەر گۆڕانکارییەک لە یەکێکیاندا بکەیت، دەستبەجێ لەوانی تردا دەردەکەوێت.</p>
+<p class="sample">ناو و ژمارەکان نموونەن بۆ دیمۆ.</p>
+</div>
+<nav class="roles" role="tablist" aria-label="ڕووکار">
+<button class="role" role="tab" id="r-admin" data-role="admin"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg><span>کارگێڕی<span class="rsub"> · ویندۆز</span></span></button>
+<button class="role" role="tab" id="r-teacher" data-role="teacher"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6"/><path d="M8 11h6"/></svg><span>مامۆستا<span class="rsub"> · مۆبایل</span></span></button>
+<button class="role" role="tab" id="r-parent" data-role="parent"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15 20a4.5 4.5 0 0 1 7-3.7"/></svg><span>دایک و باوک<span class="rsub"> · مۆبایل</span></span> <span class="badge" id="pbadge" hidden></span></button>
+</nav>
+</header>
+<main class="band"><div class="stage"><div id="view"></div><aside class="guide" id="guide"></aside></div></main>
+<div id="toast" role="status"><span id="tmsg"></span><button class="btn sm" id="tgo">بیبینە</button></div>
+<input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;const h=c.closest('table').rows[0].cells[i];c.dataset.l=h?h.textContent:''}}).observe(document,{childList:true,subtree:true})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+{
+const FEE=1500000, CHILD=1, SUBJ=['کوردی','بیرکاری','زانست','ئینگلیزی','عەرەبی'];
+const students=[
+{id:1,code:'1001',name:'ئاراس کەریم'},{id:2,code:'1002',name:'ڕێژنە عومەر'},{id:3,code:'1003',name:'هێمن جەلال'},
+{id:4,code:'1004',name:'دیلان ئەحمەد'},{id:5,code:'1005',name:'سەروەر ڕەشید'},{id:6,code:'1006',name:'ڤیان محەمەد'}];
+const S={role:'admin',tab:'dash',att:{},draft:{},payFor:null,imp:null,unread:1,
+ paid:{1:750000,2:1500000,3:500000,4:1000000,5:1500000,6:0},
+ grades:{1:{'کوردی':86,'بیرکاری':91}},
+ hw:[{t:'کوردی',b:'لاپەڕە ٢٤ بخوێنەوە و پرسیارەکان وەڵام بدەوە.'}],
+ notes:[{k:'info',t:'ڕاگەیاندن',b:'کۆبوونەوەی دایک و باوکان ڕۆژی پێنجشەممە کاتژمێر ١٠.',at:'دوێنێ'}],
+ log:['ساڵی خوێندنی نوێ دەستی پێکرد'],
+ acc:'sum',tAtt:{},tDraft:{},salPaid:{},
+ exp:[{c:'کارەبا',n:'پسوولەی مانگی ١١',a:450000},{c:'کەلوپەل',n:'دەفتەر، تەباشیر و مەرەکەب',a:180000},{c:'باج',n:'باجی مانگانە',a:300000},{c:'کرێی بینا',n:'کرێی مانگی ١١',a:1200000},{c:'پاککردنەوە',n:'کەرەستەی پاککردنەوە',a:75000}]};
+const WORKDAYS=22, CATS=['کەلوپەل','کارەبا','ئاو','باج','کرێی بینا','چاککردنەوە','پاککردنەوە','گواستنەوە','هیتر'];
+const teachers=[
+{id:1,name:'م. شیلان',subj:'کوردی',sal:900000,days:20},{id:2,name:'م. ئازاد',subj:'بیرکاری',sal:1000000,days:21},
+{id:3,name:'م. ڕووناک',subj:'زانست',sal:950000,days:18},{id:4,name:'م. کاروان',subj:'ئینگلیزی',sal:1000000,days:21},
+{id:5,name:'م. هاوژین',subj:'عەرەبی',sal:850000,days:19}];
+const DEV={log:[],closed:false,order:[2,3,4,5,6,1],clock:7*60+40};
+const TATT={present:'ئامادە',absent:'نەهاتووە',leave:'مۆڵەت'};
+const $=s=>document.querySelector(s);
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>Number(n).toLocaleString('en-US')+' IQD';
+const now=()=>new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+const stu=id=>students.find(s=>s.id===id);
+const ATT={present:'ئامادە',absent:'نەهاتووە',late:'دواکەوتووە'};
+
+function notify(k,t,b){S.notes.unshift({k,t,b,at:now()});S.unread++;}
+function toast(msg,role){$('#tmsg').textContent=msg;const g=$('#tgo');g.hidden=!role;g.onclick=()=>{go(role);$('#toast').classList.remove('on')};const el=$('#toast');el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),6000);}
+
+const guides={
+admin:['<b>داشبۆرد</b>: کورتەی ئامادەبوون و کرێ.','<b>حساباتی قوتابخانە</b>: ئامادەبوونی مامۆستا، کرێی مانگانە و خەرجییەکان (کەلوپەل، کارەبا، باج...) تۆمار بکە و کورتەی داهات و خەرجی ببینە.','<b>قوتابیان و کرێ</b>: پارەدانێک بۆ ئاراس تۆمار بکە، دواتر بڕۆ بۆ دایک و باوک.','<b>هاوردەی نمرە</b>: فایلی Excel ـی سیستەمی حکومی باربکە، یان فایلی نموونە بەکاربهێنە.','<b>ئامێری ئامادەبوون</b>: مامۆستا بە ڕووخسار و قوتابی بە کارت دەنگ تۆمار دەکەن، پاشان کاتی هاتن دابخە و ئاگادارکردنەوەکان ببینە.'],
+teacher:['ئاراس بکە بە «نەهاتووە» و ئامادەبوونەکە بنێرە.','ئەرکێکی ماڵەوە بنووسە و بینێرە.','دواتر بڕۆ بۆ دایک و باوک و ئاگادارکردنەوەکە ببینە.'],
+parent:['ئاگادارکردنەوەکان دەستبەجێ دەگەن.','نمرە، کرێی ماوە و ئەرکی ماڵەوەی منداڵەکەت.','بگەڕێوە بۆ کارگێڕی یان مامۆستا و شتێک بگۆڕە.']};
+
+function render(){
+ for(const r of ['admin','teacher','parent'])$('#r-'+r).setAttribute('aria-selected',S.role===r);
+ const b=$('#pbadge');b.hidden=!S.unread||S.role==='parent';b.textContent=S.unread;
+ $('#guide').innerHTML='<h2>چی تاقی بکەیتەوە</h2><ol>'+guides[S.role].map(x=>'<li>'+x+'</li>').join('')+'</ol><p class="sample">ناو و ژمارەکان نموونەن بۆ دیمۆ.</p><button class="btn gclose" id="gclose">باشە</button>';
+ $('#mrole').textContent={admin:'کارگێڕی',teacher:'مامۆستا · پۆلی ٥ - A',parent:'دایک و باوک'}[S.role];
+ $('#view').innerHTML=S.role==='admin'?admin():S.role==='teacher'?teacher():parent();
+}
+function go(r){S.role=r;if(r==='parent')S.unread=0;if(location.hash!=='#'+r)history.replaceState(null,'','#'+r);render();scrollTo({top:0,behavior:'smooth'});}
+
+function admin(){
+ const t=(id,l)=>`<button class="tab" role="tab" data-tab="${id}" aria-selected="${S.tab===id}">${l}</button>`;
+ return `<div class="win"><div class="bar"><span>Dexa School · کارگێڕی</span><span dir="ltr">Windows</span></div>
+ <div class="tabs" role="tablist">${t('dash','داشبۆرد')}${t('acc','حساباتی قوتابخانە')}${t('fees','قوتابیان و کرێ')}${t('imp','هاوردەی نمرە (Excel)')}${t('dev','ئامێری ئامادەبوون')}</div>
+ <div class="pad">${S.tab==='dash'?dash():S.tab==='fees'?fees():S.tab==='imp'?imp():S.tab==='dev'?dev():acc()}</div></div>`;
+}
+function devTime(){DEV.clock+=Math.floor(Math.random()*3)+1;const h=Math.floor(DEV.clock/60),m=DEV.clock%60;return h+':'+String(m).padStart(2,'0');}
+function dev(){
+ const sIn=students.filter(s=>S.att[s.id]&&S.att[s.id]!=='absent').length, tIn=teachers.filter(t=>S.tAtt[t.id]==='present').length;
+ return `<div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+ <div class="stat"><span>ئامێری ڕووخسار · دەرگای مامۆستایان</span><b style="font-size:18px"><span class="pill ok">پەیوەستە</span> ${tIn} / ${teachers.length} مامۆستا</b></div>
+ <div class="stat"><span>خوێنەری کارت · دەرگای قوتابیان</span><b style="font-size:18px"><span class="pill ok">پەیوەستە</span> ${sIn} / ${students.length} قوتابی</b></div></div>
+ <p class="muted">هەر دەنگتۆمارکردنێک لە ئامێرەکەوە دەستبەجێ دەگاتە سیستەمەکە. کاتی هاتن تا ٨:٠٠ ـە.</p>
+ <div class="row" style="margin:12px 0 16px">
+ <button class="btn" id="dvT">مامۆستایەک ڕووخسار تۆمار دەکات</button>
+ <button class="btn" id="dvS">قوتابییەک کارت لێدەدات</button>
+ <button class="btn ghost" id="dvC" ${DEV.closed?'disabled':''}>کاتژمێر ٨:٠٠ · داخستنی کاتی هاتن</button></div>
+ <div class="scroll"><table class="stack"><thead><tr><th>کات</th><th>ناو</th><th>جۆر</th><th>ڕێگا</th><th>دۆخ</th></tr></thead><tbody>
+ ${DEV.log.length?DEV.log.slice(0,12).map(l=>`<tr><td class="n">${l.at}</td><td>${l.name}</td><td>${l.who}</td><td>${l.how}</td><td><span class="pill ${l.st==='ئامادە'?'ok':'warn'}">${l.st}</span></td></tr>`).join(''):'<tr><td colspan="5" class="muted">هێشتا کەس دەنگی تۆمار نەکردووە. دوگمەکانی سەرەوە تاقی بکەرەوە.</td></tr>'}
+ </tbody></table></div>`;
+}
+function acc(){
+ const b=(id,l)=>`<button data-acc="${id}" aria-pressed="${S.acc===id}">${l}</button>`;
+ return `<div class="sub">${b('sum','کورتە')}${b('tatt','ئامادەبوونی مامۆستا')}${b('sal','کرێی مانگانە')}${b('exp','خەرجییەکان')}</div>`+
+  (S.acc==='sum'?accSum():S.acc==='tatt'?accT():S.acc==='sal'?accSal():accExp());
+}
+function totals(){
+ const inc=students.reduce((a,s)=>a+S.paid[s.id],0);
+ const sal=teachers.filter(t=>S.salPaid[t.id]).reduce((a,t)=>a+t.sal,0);
+ const ex=S.exp.reduce((a,e)=>a+e.a,0);
+ return {inc,sal,ex,net:inc-sal-ex};
+}
+function accSum(){
+ const T=totals(),byCat={};S.exp.forEach(e=>byCat[e.c]=(byCat[e.c]||0)+e.a);
+ const max=Math.max(1,...Object.values(byCat));
+ return `<div class="stats">
+ <div class="stat"><span>داهات (کرێی خوێندن)</span><b>${money(T.inc)}</b></div>
+ <div class="stat"><span>کرێی مانگانەی دراو</span><b>${money(T.sal)}</b></div>
+ <div class="stat"><span>خەرجییەکان</span><b>${money(T.ex)}</b></div>
+ <div class="stat net ${T.net<0?'neg':''}"><span>ماوە (داهات − خەرجی)</span><b>${money(T.net)}</b></div></div>
+ <h3 style="margin:20px 0 8px;font-size:16px">خەرجی بەپێی جۆر · ئەم مانگە</h3>
+ <div class="card">${Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="hbar"><span>${esc(c)}</span><span><i style="width:${v/max*100}%"></i></span><b class="n" style="white-space:nowrap">${money(v)}</b></div>`).join('')}</div>
+ <p class="muted">کرێی مانگانەی ماوە بۆ ئەم مانگە: ${money(teachers.filter(t=>!S.salPaid[t.id]).reduce((a,t)=>a+t.sal,0))}</p>`;
+}
+function accT(){
+ return `<div class="scroll"><table class="stack"><thead><tr><th>مامۆستا</th><th>وانە</th><th>ئەمڕۆ</th><th class="n">ئەم مانگە</th></tr></thead><tbody>
+ ${teachers.map(t=>{const v=S.tDraft[t.id]||S.tAtt[t.id]||'present';const bt=(k,c)=>`<button class="${c}" aria-pressed="${v===k}" data-tatt="${t.id}" data-v="${k}">${TATT[k]}</button>`;
+  return `<tr><td>${t.name}</td><td>${t.subj}</td><td style="min-width:230px"><div class="seg">${bt('present','p')}${bt('absent','a')}${bt('leave','l')}</div></td><td class="n">${t.days} / ${WORKDAYS} ڕۆژ</td></tr>`}).join('')}
+ </tbody></table></div><button class="btn" id="savetatt" style="margin-top:14px">پاشەکەوتکردنی ئامادەبوونی ئەمڕۆ</button>`;
+}
+function accSal(){
+ const all=teachers.reduce((a,t)=>a+t.sal,0);
+ return `<div class="scroll"><table class="stack"><thead><tr><th>مامۆستا</th><th>وانە</th><th class="n">ئامادەبوون</th><th class="n">کرێی مانگانە</th><th></th></tr></thead><tbody>
+ ${teachers.map(t=>`<tr><td>${t.name}</td><td>${t.subj}</td><td class="n">${t.days} / ${WORKDAYS}</td><td class="n">${money(t.sal)}</td><td>${S.salPaid[t.id]?'<span class="pill ok">دراوە</span>':`<button class="btn sm ghost" data-sal="${t.id}">دانی کرێ</button>`}</td></tr>`).join('')}
+ <tr><td colspan="3"><b>کۆی گشتی</b></td><td class="n"><b>${money(all)}</b></td><td></td></tr>
+ </tbody></table></div>`;
+}
+function accExp(){
+ const tot=S.exp.reduce((a,e)=>a+e.a,0);
+ return `<form class="form" id="expform">
+ <div><label for="ec">جۆری خەرجی</label><select id="ec">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+ <div><label for="en">تێبینی</label><input type="text" id="en" placeholder="بۆ نموونە: پسوولەی ئاو"></div>
+ <div><label for="ea">بڕ (IQD)</label><input type="number" id="ea" min="1000" step="1000" required></div>
+ <button class="btn">زیادکردنی خەرجی</button></form>
+ <div class="scroll"><table class="stack"><thead><tr><th>جۆر</th><th>تێبینی</th><th class="n">بڕ</th></tr></thead><tbody>
+ ${S.exp.map(e=>`<tr><td><span class="pill warn">${esc(e.c)}</span></td><td>${esc(e.n)}</td><td class="n">${money(e.a)}</td></tr>`).join('')}
+ <tr><td colspan="2"><b>کۆی خەرجی ئەم مانگە</b></td><td class="n"><b>${money(tot)}</b></td></tr></tbody></table></div>`;
+}
+function dash(){
+ const rec=Object.keys(S.att).length, pres=Object.values(S.att).filter(v=>v!=='absent').length;
+ const got=students.reduce((a,s)=>a+S.paid[s.id],0), left=students.length*FEE-got;
+ return `<div class="stats">
+ <div class="stat"><span>قوتابی</span><b>${students.length}</b></div>
+ <div class="stat"><span>ئامادەبوونی ئەمڕۆ</span><b>${rec?Math.round(pres/rec*100)+'%':'—'}</b></div>
+ <div class="stat"><span>کرێی وەرگیراو</span><b>${money(got)}</b></div>
+ <div class="stat"><span>کرێی ماوە</span><b>${money(left)}</b></div></div>
+ ${rec?'':'<p class="muted">مامۆستا هێشتا ئامادەبوونی ئەمڕۆی تۆمار نەکردووە.</p>'}
+ <h3 style="margin:20px 0 8px;font-size:16px">دوایین چالاکییەکان</h3>
+ <div class="card">${S.log.slice(0,6).map(x=>'<div class="grade"><span>'+esc(x)+'</span></div>').join('')}</div>`;
+}
+function fees(){
+ return `<div class="scroll"><table class="stack"><thead><tr><th>کۆد</th><th>ناو</th><th class="n">دراوە</th><th class="n">ماوە</th><th></th></tr></thead><tbody>
+ ${students.map(s=>{const left=FEE-S.paid[s.id];return `<tr><td>${s.code}</td><td>${s.name}</td><td class="n">${money(S.paid[s.id])}</td><td class="n">${left?money(left):'<span class="pill ok">تەواو</span>'}</td>
+ <td>${left?`<button class="btn sm ghost" data-pay="${s.id}">پارەدان</button>`:''}</td></tr>
+ ${S.payFor===s.id?`<tr><td colspan="5"><form class="row" id="payform"><label for="amt" class="muted">بڕی پارە بۆ ${s.name}</label><input type="number" id="amt" min="1000" step="1000" max="${left}" value="${Math.min(250000,left)}" style="max-width:200px" required><button class="btn sm">تۆمارکردن و پسوولە</button></form></td></tr>`:''}`}).join('')}
+ </tbody></table></div>`;
+}
+function imp(){
+ const i=S.imp;
+ let h=`<p style="margin-top:0">نمرەکان لە سیستەمی حکومی وەک Excel هەناردە بکە و لێرە باری بکە. پێویست ناکات مامۆستاکان دووجار نمرە بنووسن.</p>
+ <div class="drop"><p style="margin:0 0 12px">ستوونێک بۆ <b>کۆدی قوتابی</b>، و ستوونێک بۆ هەر وانەیەک</p>
+ <div class="row" style="justify-content:center"><button class="btn" id="pick">هەڵبژاردنی فایل (.xlsx / .csv)</button><button class="btn ghost" id="demo">فایلی نموونە بەکاربهێنە</button></div></div>`;
+ if(i){
+  const ok=i.rows.filter(r=>r.s);
+  h+=`<div class="row" style="margin:18px 0 8px;justify-content:space-between"><b>${esc(i.name)}</b><span><span class="pill ok">${ok.length} دۆزرایەوە</span> <span class="pill warn">${i.rows.length-ok.length} نەدۆزرایەوە</span></span></div>
+  <div class="scroll"><table class="stack"><thead><tr><th>کۆد</th><th>قوتابی</th>${i.subj.map(x=>'<th class="n">'+esc(x)+'</th>').join('')}</tr></thead><tbody>
+  ${i.rows.map(r=>`<tr><td>${esc(r.code)}</td><td>${r.s?r.s.name:'<span class="pill warn">کۆد نەناسرا</span>'}</td>${i.subj.map(x=>'<td class="n">'+esc(r.g[x]??'')+'</td>').join('')}</tr>`).join('')}
+  </tbody></table></div><div class="row" style="margin-top:14px"><button class="btn" id="save" ${ok.length?'':'disabled'}>پاشەکەوتکردنی ${ok.length} قوتابی</button><button class="btn ghost" id="clear">هەڵوەشاندنەوە</button></div>`;
+ }
+ if(i&&i.err)h+=`<p class="pill warn" style="margin-top:12px">${esc(i.err)}</p>`;
+ return h;
+}
+function parseRows(rows,name){
+ rows=rows.filter(r=>r&&r.some(c=>String(c??'').trim()!==''));
+ if(rows.length<2)return {name,rows:[],subj:[],err:'فایلەکە بەتاڵە.'};
+ const head=rows[0].map(c=>String(c??'').trim());
+ const ci=head.findIndex(h=>/کۆد|code|رقم|ژمارە/i.test(h));
+ const ni=head.findIndex(h=>/ناو|name|اسم/i.test(h));
+ if(ci<0)return {name,rows:[],subj:[],err:'ستوونی کۆدی قوتابی نەدۆزرایەوە. سەردێڕی ستوونەکە بکە بە «کۆدی قوتابی».'};
+ const cols=head.map((h,i)=>({h,i})).filter(c=>c.i!==ci&&c.i!==ni&&c.h);
+ const out=rows.slice(1,201).map(r=>{const code=String(r[ci]??'').trim();const g={};cols.forEach(c=>{const v=Number(r[c.i]);if(String(r[c.i]??'').trim()!==''&&!isNaN(v))g[c.h]=v});return {code,s:students.find(s=>s.code===code),g};});
+ return {name,rows:out,subj:cols.map(c=>c.h)};
+}
+function readFile(f){
+ const rd=new FileReader();
+ rd.onload=e=>{try{
+  let rows;
+  if(/\.csv$/i.test(f.name)||typeof XLSX==='undefined'){rows=new TextDecoder().decode(e.target.result).split(/\r?\n/).map(l=>l.split(','));}
+  else{const wb=XLSX.read(e.target.result,{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true});}
+  S.imp=parseRows(rows,f.name);
+ }catch(err){S.imp={name:f.name,rows:[],subj:[],err:'ناتوانرێت ئەم فایلە بخوێنرێتەوە.'}}render();};
+ rd.readAsArrayBuffer(f);
+}
+
+function teacher(){
+ return `<div class="phonewrap"><div class="phone"><div class="screen"><div class="appbar"><small>مامۆستا · پۆلی ٥ - A</small><b>ئامادەبوونی ئەمڕۆ</b></div>
+ <div class="list">${students.map(s=>{const v=S.draft[s.id]||'present';const b=(k,c)=>`<button class="${c}" aria-pressed="${v===k}" data-att="${s.id}" data-v="${k}">${ATT[k]}</button>`;
+  return `<div class="card"><h3>${s.name}</h3><div class="seg">${b('present','p')}${b('absent','a')}${b('late','l')}</div></div>`}).join('')}
+ <button class="btn" id="sendatt">ناردنی ئامادەبوون</button>
+ <div class="card"><h3>ئەرکی ماڵەوە</h3><label for="hwt" class="muted">ئەرکی بیرکاری</label><textarea id="hwt" rows="2">ڕاهێنانەکانی لاپەڕە ٣٠ تەواو بکە.</textarea><button class="btn sm" id="sendhw" style="margin-top:8px">ناردن بۆ دایک و باوکان</button></div>
+ </div></div></div></div>`;
+}
+
+function parent(){
+ const s=stu(CHILD), a=S.att[CHILD], left=FEE-S.paid[CHILD], g=S.grades[CHILD]||{};
+ return `<div class="phonewrap"><div class="phone"><div class="screen"><div class="appbar"><small>بەخێربێیت</small><b>${s.name} · پۆلی ٥ - A</b></div>
+ <div class="list">
+ ${S.notes.slice(0,4).map(n=>`<div class="card ${n.k==='absence'?'alert':''}"><h3>${esc(n.t)} <span class="muted" style="font-weight:400">· ${esc(n.at)}</span></h3><div class="muted">${esc(n.b)}</div></div>`).join('')}
+ <div class="card"><h3>ئامادەبوونی ئەمڕۆ</h3>${a?`<span class="pill ${a==='present'?'ok':'warn'}">${ATT[a]}</span>`:'<span class="muted">هێشتا تۆمار نەکراوە</span>'}</div>
+ <div class="card"><h3>نمرەکان</h3>${Object.keys(g).length?Object.entries(g).map(([k,v])=>`<div class="grade"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join(''):'<span class="muted">هێشتا نمرە نییە</span>'}</div>
+ <div class="card"><h3>کرێی خوێندن</h3><div class="row" style="justify-content:space-between"><span class="muted">ماوە</span><b>${left?money(left):'تەواو دراوە'}</b></div><div class="meter"><i style="width:${S.paid[CHILD]/FEE*100}%"></i></div></div>
+ <div class="card"><h3>ئەرکی ماڵەوە</h3>${S.hw.map(h=>`<div class="grade"><span>${esc(h.t)}</span><span class="muted">${esc(h.b)}</span></div>`).join('')}</div>
+ </div></div></div></div>`;
+}
+
+document.addEventListener('click',e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.id==='helpbtn'){document.body.classList.toggle('helpon');return;}
+ if(t.id==='gclose'){document.body.classList.remove('helpon');return;}
+ if(t.dataset.role){document.body.classList.remove('helpon');return go(t.dataset.role);}
+ if(t.dataset.tab){S.tab=t.dataset.tab;S.payFor=null;return render();}
+ if(t.dataset.pay){S.payFor=+t.dataset.pay;render();const i=$('#amt');i&&i.focus();return;}
+ if(t.dataset.att){S.draft[+t.dataset.att]=t.dataset.v;return render();}
+ if(t.dataset.acc){S.acc=t.dataset.acc;return render();}
+ if(t.id==='dvT'){const x=teachers.find(y=>S.tAtt[y.id]!=='present');if(!x)return toast('هەموو مامۆستایان هاتوون.');const at=devTime();
+  if(S.tAtt[x.id]!=='present')x.days=Math.min(WORKDAYS,x.days+1);S.tAtt[x.id]='present';DEV.log.unshift({at,name:x.name,who:'مامۆستا',how:'ڕووخسار',st:'ئامادە'});
+  S.log.unshift('ئامێر: '+x.name+' هات · '+at);render();return toast(x.name+' ناسرایەوە. لە ئامادەبوونی مامۆستادا تۆمار کرا.');}
+ if(t.id==='dvS'){const id=DEV.order.find(i=>!S.att[i]||S.att[i]==='absent');if(!id)return toast('هەموو قوتابیان هاتوون.');const x=stu(id),at=DEV.closed?'8:'+String(5+Math.floor(Math.random()*20)).padStart(2,'0'):devTime();
+  const st=DEV.closed?'late':'present';S.att[id]=st;S.draft[id]=st;DEV.log.unshift({at,name:x.name,who:'قوتابی',how:'کارت',st:ATT[st]});
+  if(id===CHILD)notify(st==='late'?'absence':'arrive',st==='late'?'دواکەوتن':'گەیشتن',x.name+' کاتژمێر '+at+' گەیشتە قوتابخانە.');
+  S.log.unshift('ئامێر: '+x.name+' کارتی لێدا · '+at);render();return toast(x.name+' تۆمار کرا'+(id===CHILD?' و دایک و باوکی ئاگادار کرانەوە.':'.'),id===CHILD?'parent':null);}
+ if(t.id==='dvC'){DEV.closed=true;const miss=students.filter(s=>!S.att[s.id]);miss.forEach(s=>{S.att[s.id]='absent';S.draft[s.id]='absent';if(s.id===CHILD)notify('absence','ئامادە نەبوون',s.name+' تا کاتژمێر ٨:٠٠ نەگەیشتۆتە قوتابخانە.')});
+  teachers.forEach(x=>{if(!S.tAtt[x.id])S.tAtt[x.id]='absent'});
+  S.log.unshift('کاتی هاتن داخرا · '+miss.length+' قوتابی نەهاتوو');render();return toast(miss.length?miss.length+' قوتابی وەک نەهاتوو تۆمار کران و دایک و باوکیان ئاگادار کرانەوە.':'هەموو قوتابیان لە کاتی خۆیدا هاتوون.',miss.some(s=>s.id===CHILD)?'parent':null);}
+ if(t.dataset.tatt){S.tDraft[+t.dataset.tatt]=t.dataset.v;return render();}
+ if(t.id==='savetatt'){teachers.forEach(x=>{const nv=S.tDraft[x.id]||S.tAtt[x.id]||'present';if(nv==='present'&&S.tAtt[x.id]!=='present')x.days=Math.min(WORKDAYS,x.days+1);S.tAtt[x.id]=nv});S.tDraft={};
+  const off=teachers.filter(x=>S.tAtt[x.id]!=='present').length;S.log.unshift('ئامادەبوونی مامۆستایان تۆمار کرا · '+off+' نەهاتوو/مۆڵەت');render();return toast('ئامادەبوونی مامۆستایان پاشەکەوت کرا.');}
+ if(t.dataset.sal){const x=teachers.find(y=>y.id===+t.dataset.sal);S.salPaid[x.id]=true;S.log.unshift('کرێی مانگانە: '+x.name+' · '+money(x.sal)+' · '+now());render();return toast('کرێی '+x.name+' تۆمار کرا.');}
+ if(t.id==='pick')return $('#file').click();
+ if(t.id==='demo'){const rows=[['کۆدی قوتابی','ناو',...SUBJ]];const base=[[1001,88,94,79,85,90],[1002,95,90,97,92,88],[1003,72,68,80,75,70],[1004,84,77,88,90,81],[1005,91,96,89,94,93],[1006,79,83,76,88,85],[1099,70,70,70,70,70]];
+  base.forEach(r=>{const s=students.find(x=>x.code===String(r[0]));rows.push([String(r[0]),s?s.name:'—',...r.slice(1)])});S.imp=parseRows(rows,'نمرەکانی_وەرزی_یەکەم.xlsx');return render();}
+ if(t.id==='clear'){S.imp=null;return render();}
+ if(t.id==='save'){const ok=S.imp.rows.filter(r=>r.s);ok.forEach(r=>{S.grades[r.s.id]=Object.assign({},S.grades[r.s.id],r.g)});
+  S.log.unshift('نمرەی '+ok.length+' قوتابی لە Excel ـەوە هاوردە کرا · '+now());
+  if(ok.some(r=>r.s.id===CHILD))notify('grade','نمرە نوێکرانەوە','نمرەکانی وەرزی یەکەمی ئاراس ئێستا ئامادەن.');
+  S.imp=null;render();return toast('نمرەکان پاشەکەوت کران و بۆ دایک و باوکان نێردران.','parent');}
+ if(t.id==='sendatt'){students.forEach(s=>{S.att[s.id]=S.draft[s.id]||'present'});
+  const miss=students.filter(s=>S.att[s.id]!=='present');
+  miss.forEach(s=>{if(s.id===CHILD)notify('absence',S.att[s.id]==='absent'?'ئامادە نەبوون':'دواکەوتن',s.name+' ئەمڕۆ '+ATT[S.att[s.id]]+'.')});
+  S.log.unshift('ئامادەبوونی پۆلی ٥ - A تۆمار کرا · '+miss.length+' نەهاتوو/دواکەوتوو');
+  render();return toast(miss.length?'ئامادەبوون نێردرا. '+miss.length+' دایک و باوک ئاگادار کرانەوە.':'ئامادەبوون نێردرا. هەمووان ئامادەن.','parent');}
+ if(t.id==='sendhw'){const v=$('#hwt').value.trim();if(!v)return;S.hw.unshift({t:'بیرکاری',b:v});notify('hw','ئەرکی ماڵەوەی نوێ','بیرکاری: '+v);S.log.unshift('ئەرکی ماڵەوەی بیرکاری نێردرا');render();return toast('ئەرکەکە بۆ دایک و باوکان نێردرا.','parent');}
+});
+document.addEventListener('submit',e=>{
+ if(e.target.id==='expform'){e.preventDefault();const a=Math.round(+$('#ea').value);if(!(a>0))return;const c=$('#ec').value,n=$('#en').value.trim()||'—';
+  S.exp.unshift({c,n,a});S.log.unshift('خەرجی: '+c+' · '+money(a)+' · '+now());render();return toast('خەرجییەکە زیاد کرا.');}
+ if(e.target.id!=='payform')return;e.preventDefault();
+ const id=S.payFor,left=FEE-S.paid[id],v=Math.min(Math.max(0,Math.round(+$('#amt').value)),left);if(!v)return;
+ S.paid[id]+=v;S.log.unshift('پارەدان: '+stu(id).name+' · '+money(v)+' · '+now());
+ if(id===CHILD)notify('pay','پارەدان وەرگیرا',money(v)+' وەرگیرا. ماوە: '+money(FEE-S.paid[id])+'.');
+ S.payFor=null;render();toast('پسوولە تۆمار کرا.',id===CHILD?'parent':null);
+});
+$('#file').addEventListener('change',e=>{const f=e.target.files[0];if(f)readFile(f);e.target.value='';});
+const start=()=>{const h=location.hash.slice(1);S.role=['admin','teacher','parent'].includes(h)?h:'admin';if(S.role==='parent')S.unread=0;render();};
+addEventListener('hashchange',start);start();
+const setMH=()=>{const m=document.querySelector('.mbar');if(m)document.documentElement.style.setProperty('--mh',m.offsetHeight+'px')};
+addEventListener('resize',setMH);addEventListener('load',setMH);setMH();
+}
+</script>
+</body>
+</html>
